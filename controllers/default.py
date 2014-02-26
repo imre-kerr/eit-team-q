@@ -42,6 +42,7 @@ def index():
     house = db().select(db.house.ALL)
     return dict(sensor = sensor, room = room, house = house)
 
+@auth.requires_login()
 def touchroom():
     sensors = db().select(db.sensor.ALL, orderby=db.sensor.id)
     # calculating overall average temperature
