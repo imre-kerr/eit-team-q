@@ -23,6 +23,7 @@ def index():
 #    db.room.truncate()
 #    db.sensor.truncate()
 
+    # create random mock data and get current time
     a = random.uniform(15, 25)
     now = datetime.datetime.now()
 
@@ -30,17 +31,20 @@ def index():
 
 #    db.room.insert(name='stue', house = db(db.house.name=='mitthus').select()[0])
 
+    # select house and room (should be a better way to do this)
     houses = db(db.house.name=='mitthus').select()
     house = houses[0]
     rooms = db(db.room.name=='stue').select()
     room = rooms[0]
 
+    # insert sensor reading into database
     db.sensor.insert(name = 'Sensor 1', sensor_type = 'Temperature', sensor_reading = a, date_time = now, room = room, house = house)
 
+    # create some variables for the index.html view
     sensor = db().select(db.sensor.ALL, orderby=db.sensor.id)
     room = db().select(db.room.ALL)
     house = db().select(db.house.ALL)
-    return dict(sensor = sensor, room = room, house = house)
+    return locals()
 
 @auth.requires_login()
 def touchroom():
