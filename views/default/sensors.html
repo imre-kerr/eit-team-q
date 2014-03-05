@@ -1,3 +1,2 @@
 {{extend 'layout.html'}}
-<!-- var t = {{=XML(response.json(m))}} -->
-{{=LOAD('','sensors.load',ajax=True, times="infinity", timeout=3000)}}
+{{=LOAD('sensors.load',ajax=True, times="infinity", timeout=1000)}}
