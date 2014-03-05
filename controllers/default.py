@@ -51,16 +51,16 @@ def sensors():
 
 @auth.requires_login()
 def touchroom():
-    sensors = db().select(db.sensor.ALL, orderby=db.sensor.id)
+    sensorreadings = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
     # calculating overall average temperature
     average_temp = 0
     readings = []
     datetimes = []
-    for s in sensors:
-        average_temp += s.sensor_reading
-        readings.append(s.sensor_reading)
-        datetimes.append(s.date_time)
-    average_temp = average_temp / len(sensors)
+    for s in sensorreadings:
+        average_temp += s.reading
+        readings.append(s.reading)
+        datetimes.append(s.datetime)
+    average_temp = average_temp / len(sensorreadings)
     return dict(average_temp = average_temp, readings = readings, datetimes = datetimes)
 
 def user():
