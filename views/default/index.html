@@ -2,15 +2,13 @@
 {{extend 'layout.html'}}
 <div id=temperatures>
     Number of sensor readings in database:
-    {{=TD(len(sensor))}}
+    {{=TD(len(sensorreading))}}
 <table>
-{{for temp in reversed(sensor):}}
+{{for temp in reversed(sensorreading):}}
 <tr>
-    {{=TD(temp.name)}}
-    {{=TD(temp.sensor_type)}}
-    {{=TD(temp.sensor_reading)}}
-    {{=TD(temp.date_time)}}
-    {{=TD(temp.room.name)}}
+    {{=TD(temp.reading)}}
+    {{=TD(temp.datetime)}}
+    {{=TD(temp.sensor)}}
 </tr>
     {{pass}}
 </table>

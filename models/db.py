@@ -81,23 +81,21 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 
 db.define_table('house',
-   Field('image', 'upload'),
    Field('name', 'string'))
 
 db.define_table('room',
    Field('name', 'string'),
-   Field('xpos', 'integer'),
-   Field('ypos', 'integer'),
-   Field('width', 'integer'),
-   Field('height', 'integer'),
+   Field('image', 'upload'),
    Field('house', db.house))
 
 db.define_table('sensor',
-   Field('name' , 'string'),
-   Field('sensor_type', 'string'),
-   Field('sensor_reading' , 'double'),
-   Field('date_time', 'datetime'),
+   Field('sensortype', 'string'),
    Field('room', db.room))
+
+db.define_table('sensor_reading',
+   Field('reading', 'double'),
+   Field('datetime', 'datetime'),
+   Field('sensor', db.sensor))
 
 crud.settings.create_next = URL('index')
 crud.settings.update_next = URL('index')

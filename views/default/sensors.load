@@ -1,5 +1,5 @@
-{{for s in reversed(sensor):}}
-<div class="sensors">
-  {{=s.sensor_reading}}
+{{for s in reversed(sensorreading):}}
+<div class="sensorreadings">
+  {{=s.reading}}
 </div>
 {{pass}}
