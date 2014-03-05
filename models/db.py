@@ -85,7 +85,7 @@ db.define_table('house',
 
 db.define_table('room',
    Field('name', 'string'),
-   Field('image', 'upload'),
+   Field('image', 'string'),
    Field('house', db.house))
 
 db.define_table('sensor',
