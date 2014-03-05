@@ -1,0 +1,8 @@
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" xml:space="preserve">
+<rect x="136.5" y="86.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="700" height="350"/>
+<rect x="141.5" y="91.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="690" height="340"/>
+<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="335.5" y1="432" x2="335.5" y2="93"/>
+<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="622.5" y1="431" x2="622.5" y2="92"/>
+<rect x="141.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room1" />
+<rect x="622.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room2" />
+</svg>
