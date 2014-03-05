@@ -93,8 +93,7 @@ db.define_table('sensor',
    Field('sensor_type', 'string'),
    Field('sensor_reading' , 'double'),
    Field('date_time', 'datetime'),
-   Field('room', db.room),
-   Field('house', db.house))
+   Field('room', db.room))
 
 crud.settings.create_next = URL('index')
 crud.settings.update_next = URL('index')

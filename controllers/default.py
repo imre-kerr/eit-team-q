@@ -38,13 +38,16 @@ def index():
     room = rooms[0]
 
     # insert sensor reading into database
-    db.sensor.insert(name = 'Sensor 1', sensor_type = 'Temperature', sensor_reading = a, date_time = now, room = room, house = house)
+    db.sensor.insert(name = 'Sensor 1', sensor_type = 'Temperature', sensor_reading = a, date_time = now, room = room)
 
     # create some variables for the index.html view
     sensor = db().select(db.sensor.ALL, orderby=db.sensor.id)
     room = db().select(db.room.ALL)
     house = db().select(db.house.ALL)
     return locals()
+
+def sensors():
+    return dict(sensor = db().select(db.sensor.ALL, orderby=db.sensor.id))
 
 @auth.requires_login()
 def touchroom():
