@@ -81,15 +81,20 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 
 db.define_table('house',
+   Field('image', 'string'),
    Field('name', 'string'))
 
 db.define_table('room',
    Field('name', 'string'),
    Field('image', 'string'),
+   Field('xpos', 'double'),
+   Field('ypos', 'double'),
    Field('house', db.house))
 
 db.define_table('sensor',
    Field('sensortype', 'string'),
+   Field('xpos', 'double'),
+   Field('ypos', 'double'),
    Field('room', db.room))
 
 db.define_table('sensor_reading',
