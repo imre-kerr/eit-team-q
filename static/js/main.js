@@ -25,16 +25,32 @@ $(document).ready(function () {
   ready = true;
 });
 
-function popup(room) {
+function popup(room, db_data) {
   $('.room-dialog').dialog({
     modal: true,
-    height:140
+    height:480,
+    width:640
   });
   $('.room-dialog').text("Her skal det stå jævlig mye fet info om rom: " + room.name);
+  var div_id = 'room' + room.id + '-temp-plot';
+  $('.room-dialog').append('<div id="' + div_id + '" class="temp-plot"></div>');
+  
+  var plot_data = [];
+  for (var i = db_data.sensorreading.length - 1; i >= 0; i--) { // TODO: Flere temperatursensorer i ett rom???
+    var reading = db_data.sensorreading[i];
+    var sensor = db_data.sensor.where("(el) => el.id == " + reading.sensor)[0];
+    if (sensor.type = 'Temperature' && sensor.room == room.id) {
+      plot_data.push([Date.parse(reading.datetime), reading.reading]);
+    }
+  };
+  var enddate = new Date();
+  var startdate = new Date(enddate - 600000);
+  $.plot('#'+div_id, [plot_data], {xaxis:{mode:"time", min: startdate, max:enddate}});
 }
 
-function add_popup(rect, room) {
-  rect.click(function() {popup(room)});
+function add_popup(rect, room, db_data) {
+  rect.click(null);
+  rect.click(function() {popup(room, db_data)});
 }
 
 function draw_temps (db_data, draw) {
@@ -55,12 +71,11 @@ function draw_temps (db_data, draw) {
     for (var i = 0; i < db_data.room.length; i++) {
       var room = db_data.room[i];
       var rect = room_rects[room_rects.length] = draw.svg(room.image);
-      add_popup(rect.roots()[0], room);
     }
   }
   for (var i = 0; i < db_data.room.length; i++) {
     var room = db_data.room[i];
-    var room_sensors = db_data.sensor.where("(el) => el.room ==" + room.id);
+    var room_sensors = temp_sensors.where("(el) => el.room ==" + room.id);
     var room_readings = []
     for (var j = db_data.sensorreading.length - 1; j >= 0; j--) {
       if (room_sensors.where("(el) => el.id == " + db_data.sensorreading[j].sensor).length > 0)
@@ -71,6 +86,7 @@ function draw_temps (db_data, draw) {
     if (room_readings.length > 0)
     {
       room_rects[i].roots()[0].fill(temp_color(room_readings[0].reading));
+      add_popup(room_rects[i].roots()[0], room, db_data);
       var string = room_readings[0].reading.toFixed(1) + "°"
       var text = draw.text(string).font({
         family:   'Helvetica'
@@ -89,6 +105,10 @@ function draw_temps (db_data, draw) {
 
 
 function draw_lights(db_data, draw) {
+  for (var i = lights.length - 1; i >= 0; i--) {
+    lights[i].remove();
+  };
+  lights = [];
   var light_sensors = db_data.sensor.where("(el) => el.sensortype == 'Light'");
   var readings = [];
   for (var i = db_data.sensorreading.length - 1; i >= 0; i--) {
@@ -97,13 +117,18 @@ function draw_lights(db_data, draw) {
       readings[readings.length] = db_data.sensorreading[i];
     }
   }
-  if (lights.length == 0) {
-    for (var i = light_sensors.length - 1; i >= 0; i--) {
-      
-    };
-  }
-
-  // SHOW SOME GRADIENTS
+  for (var i = light_sensors.length - 1; i >= 0; i--) {
+    var sensor_readings = readings.where('(el) => el.sensor == ' + light_sensors[i].id);
+    var room = db_data.room.where('(el) => el.id == ' + light_sensors[i].room)[0];
+    if (sensor_readings.length > 0) {
+      var on = sensor_readings[0].reading > 0;
+      var url = (on ? '../static/images/lighton.png' : '../static/images/lightoff.png');
+      var icon = draw.image(url);
+      icon.x(room.xpos + 10);
+      icon.y(room.ypos + 40);
+      lights.push(icon);
+    }
+  };
 }
 
 function temp_color(temp) {
@@ -152,3 +177,4 @@ function HSVtoRGB(h, s, v) {
         b: Math.floor(b * 255)
     };
 }
+
