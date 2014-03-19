@@ -41,6 +41,7 @@ def index():
 
     room = db().select(db.room.ALL)[1]
 #    db.sensor.insert(sensortype = 'Temperature', room = room)
+#    db.sensor.insert(sensortype = 'Light', room = room)
 
     room = db().select(db.room.ALL)[2]
 #    db.sensor.insert(sensortype = 'Temperature', room = room)
@@ -53,6 +54,9 @@ def index():
     db.sensor_reading.insert(reading = a, datetime = now, sensor = sensors[0])
     db.sensor_reading.insert(reading = b, datetime = now, sensor = sensors[1])
     db.sensor_reading.insert(reading = c, datetime = now, sensor = sensors[2])
+
+    light_sensors = db(db.sensor.sensortype =='Light').select()
+    db.sensor_reading.insert(reading = random.uniform(-1, 1), datetime = now, sensor = light_sensors[0])
 
     # create some variables for the index.html view
     sensorreading = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
