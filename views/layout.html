@@ -47,6 +47,7 @@
   response.files.insert(2,URL('static','css/bootstrap-responsive.min.css'))
   response.files.insert(3,URL('static','css/web2py_bootstrap.css'))
   }}
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" type="text/css">
 
   {{include 'web2py_ajax.html'}}
 
@@ -164,6 +165,7 @@
     'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'} 
   });</script>
   {{pass}}
+  <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js" type="text/javascript" charset="utf-8" async defer></script>
   <script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>
   <script src="{{=URL('static','js/svg.js')}}"></script>
   <script src="{{=URL('static','js/svg.parser.js')}}"></script>

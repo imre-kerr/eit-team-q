@@ -1,6 +1,7 @@
 <script>
   var db_data = {{=XML(response.json(data))}}
   console.log(db_data);
-  if (ready)
+  if (ready) {
     draw_temps(db_data, draw);
+  }
 </script>
