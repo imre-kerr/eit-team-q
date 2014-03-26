@@ -9,8 +9,10 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 import datetime
+import time
 import random
 from applications.myApp.modules import dongleinput
+from threading import Thread
 
 def index():
     """
@@ -49,7 +51,7 @@ def index():
 
     # select sensor to assign reading to (TODO: find a better way to do this)
     sensors = db(db.sensor.sensortype =='Temperature').select()
-    
+
     # insert sensor reading into database
 
     db.sensor_reading.insert(reading = a, datetime = now, sensor = sensors[0])
@@ -78,17 +80,39 @@ def map():
 
 @auth.requires_login()
 def touchroom():
-    sensorreadings = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
+    isOpen = False
+    dongle = dongleinput.setup()
+    dongle.open()
+    isOpen = dongle.isOpen()
+    t1 = Thread(target = readDongleInput(dongle))
+    t1.start()
+    #--------------#
+    return dict(isOpen = isOpen)
+
+def readDongleInput(dongle):
+    i = 0
+    while(i < 1):
+        line = dongle.readline()
+        data = line.split(" ")
+        sensor_id = data[1]
+        sensor_type = data[2]
+        sensor_value = data[3]
+        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
+        i += 1
+        #time.sleep(3)
+
+def calcAverageTemp():
     # calculating overall average temperature
     average_temp = 0
     readings = []
     datetimes = []
+    sensorreadings = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
     for s in sensorreadings:
         average_temp += s.reading
         readings.append(s.reading)
         datetimes.append(s.datetime)
     average_temp = average_temp / len(sensorreadings)
-    return dict(average_temp = average_temp, readings = readings, datetimes = datetimes, setup_status = setup_status)
+
 
 def user():
     """

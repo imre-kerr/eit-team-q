@@ -11,18 +11,23 @@ def setup():
     ser.port = "/dev/cu.usbmodem1a121"
     ser.stopbits = serial.STOPBITS_ONE
     ser.rtscts = True
-    ser.open()
-    return ser.isOpen()
+    return ser
 
-def listen():
+"""
+def getSingle(ser):
+    # Reads one line, splits at a new line.
+    x = ser.readline()
+    # Data kommer i format: "UNIT ID sensortype data", for eksempel: "UNIT 1 0 20". La oss forsøke å lese hele linja og splitte på " ".
+    data = x.split(" ")
+    # Hvis det kommer noe annet enn UNIT er det snakk om config-meldinger i starten av oppsettet.
+    if (data[0] == "UNIT"):
+        sensor_id = data[1]
+        sensor_type = data[2]
+        sensor_value = data[3]
+    return x
+
+def listen(ser):
     while(True):
-        # Reads one line, splits at a new line.
-        x = ser.readline()
-        # Data kommer i format: "UNIT ID sensortype data", for eksempel: "UNIT 1 0 20". La oss forsøke å lese hele linja og splitte på " ".
-        data = x.split(" ")
-        # Hvis det kommer noe annet enn UNIT er det snakk om config-meldinger i starten av oppsettet.
-        if (data[0] == "UNIT"):
-            sensor_id = data[1]
-            sensor_type = data[2]
-            sensor_value = data[3]
-        time.sleep(3000)
+        getSingle(ser)
+        time.sleep(3)
+"""
