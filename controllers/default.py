@@ -10,6 +10,7 @@
 #########################################################################
 import datetime
 import random
+from applications.myApp.modules import dongleinput
 
 def index():
     """
@@ -87,7 +88,7 @@ def touchroom():
         readings.append(s.reading)
         datetimes.append(s.datetime)
     average_temp = average_temp / len(sensorreadings)
-    return dict(average_temp = average_temp, readings = readings, datetimes = datetimes)
+    return dict(average_temp = average_temp, readings = readings, datetimes = datetimes, setup_status = setup_status)
 
 def user():
     """
