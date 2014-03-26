@@ -91,13 +91,14 @@ def touchroom():
 
 def readDongleInput(dongle):
     i = 0
-    while(i < 1):
+    while(i < 3):
         line = dongle.readline()
         data = line.split(" ")
-        sensor_id = data[1]
-        sensor_type = data[2]
-        sensor_value = data[3]
-        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
+        if len(data) > 3:
+            sensor_id = data[1]
+            sensor_type = data[2]
+            sensor_value = data[3]
+            db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
         i += 1
         #time.sleep(3)
 

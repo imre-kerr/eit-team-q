@@ -11,6 +11,7 @@ def setup():
     ser.port = "/dev/cu.usbmodem1a121"
     ser.stopbits = serial.STOPBITS_ONE
     ser.rtscts = True
+    ser.timeout = 3
     return ser
 
 """
