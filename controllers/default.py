@@ -54,12 +54,12 @@ def index():
 
     # insert sensor reading into database
 
-    db.sensor_reading.insert(reading = a, datetime = now, sensor = sensors[0])
-    db.sensor_reading.insert(reading = b, datetime = now, sensor = sensors[1])
-    db.sensor_reading.insert(reading = c, datetime = now, sensor = sensors[2])
+    #db.sensor_reading.insert(reading = a, datetime = now, sensor = sensors[0])
+   # db.sensor_reading.insert(reading = b, datetime = now, sensor = sensors[1])
+   # db.sensor_reading.insert(reading = c, datetime = now, sensor = sensors[2])
 
     light_sensors = db(db.sensor.sensortype =='Light').select()
-    db.sensor_reading.insert(reading = random.uniform(-1, 1), datetime = now, sensor = light_sensors[0])
+  #  db.sensor_reading.insert(reading = random.uniform(-1, 1), datetime = now, sensor = light_sensors[0])
 
     # create some variables for the index.html view
     sensorreading = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
@@ -84,25 +84,29 @@ def touchroom():
     dongle = dongleinput.setup()
     dongle.open()
     isOpen = dongle.isOpen()
-    t1 = Thread(target = readDongleInput(dongle))
-    t1.start()
-    #--------------#
+    #-----Start reading the port in a new thread-----#
+    thread = Thread(target=read_from_port, args=(dongle,))
+    thread.start()
     return dict(isOpen = isOpen)
 
-def readDongleInput(dongle):
-    i = 0
-    while(i < 3):
-        line = dongle.readline()
-        data = line.split(" ")
-        if len(data) > 3:
-            sensor_id = data[1]
-            sensor_type = data[2]
-            sensor_value = data[3]
-            db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
-        i += 1
-        #time.sleep(3)
+def read_from_port(dongle):
+    while True:
+        #print("reading from com-port..")
+        reading = dongle.readline()
+        handle_data(reading)
 
-def calcAverageTemp():
+def handle_data(data):
+    # Data in format "UNIT id type value", ex "UNIT 0 0 0".
+    data = data.split(" ")
+    # TODO: regexp to check that data is sensor value, not setup info?
+    # Currently checks for the matching list length.
+    if len(data) == 4:
+        sensor_id = data[1]
+        sensor_type = data[2]
+        sensor_value = data[3]
+        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
+
+def calc_average_temp():
     # calculating overall average temperature
     average_temp = 0
     readings = []
