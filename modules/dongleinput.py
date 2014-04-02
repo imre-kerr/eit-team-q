@@ -12,27 +12,42 @@ def setup():
     ser.port = "/dev/cu.usbmodem1a121"
     ser.stopbits = serial.STOPBITS_ONE
     ser.rtscts = True
-    ser.timeout = 4 #opens for 2 seconds.
+    ser.timeout = 3
+    print "setup complete"
     return ser
 
-def read_from_port(dongle,db):
-    #while True:
-        #print("reading from com-port..")
+def read_from_port(dongle, db):
+    print "reading from port.."
+    '''
+    if not dongle:
+        print  "dongle not setup"
+        dongle = setup()
+    if not dongle.isOpen():
+        print "opening dongle."
+        dongle.open()
+    '''
     reading = dongle.readline()
-    handle_data(reading, db)
+#dongle.close()
+    return handle_data(reading, db)
+
+def type_string(type):
+    # TODO: Stop lying
+    return "Temperature"
 
 def handle_data(data, db):
+    print data
     # Data in format "UNIT id type value", ex "UNIT 0 0 0".
     data = data.split(" ")
     # TODO: regexp to check that data is sensor value, not setup info?
     # Currently checks for the matching list length.
     if len(data) == 4:
+        print "extracting data and inserting to db"
         sensor_id = data[1]
-        sensor_type = 64 #data[2]
+        sensor_type = data[2]
         sensor_value = data[3]
-        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
-    return "<script>console.log('inserted data:" + " ".join(data) + "')</script>"
-    
-#dongle = setup()
-#dongle.open()
-#read_from_port(dongle)
+        sensor = db((db.sensor.id == sensor_id)).select()
+        if not sensor:
+            db.sensor.insert(id=sensor_id, sensortype=type_string(sensor_type), room = 1) # Can id be set manually?
+        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_id)
+        db.commit()
+    return "<script>alert('inserted data:" + " ".join(data) + "')</script>"
