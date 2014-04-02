@@ -12,7 +12,9 @@ import datetime
 import time
 import random
 from applications.myApp.modules import dongleinput
-from threading import Thread
+from gluon.scheduler import Scheduler
+
+dongle = None
 
 def index():
     """
@@ -80,31 +82,8 @@ def map():
 
 @auth.requires_login()
 def touchroom():
-    isOpen = False
-    dongle = dongleinput.setup()
-    dongle.open()
-    isOpen = dongle.isOpen()
-    #-----Start reading the port in a new thread-----#
-    thread = Thread(target=read_from_port, args=(dongle,))
-    thread.start()
-    return dict(isOpen = isOpen)
-
-def read_from_port(dongle):
-    while True:
-        #print("reading from com-port..")
-        reading = dongle.readline()
-        handle_data(reading)
-
-def handle_data(data):
-    # Data in format "UNIT id type value", ex "UNIT 0 0 0".
-    data = data.split(" ")
-    # TODO: regexp to check that data is sensor value, not setup info?
-    # Currently checks for the matching list length.
-    if len(data) == 4:
-        sensor_id = data[1]
-        sensor_type = data[2]
-        sensor_value = data[3]
-        db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_type)
+    #
+    return dict()
 
 def calc_average_temp():
     # calculating overall average temperature

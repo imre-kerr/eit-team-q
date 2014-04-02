@@ -1,3 +1,11 @@
+{{
+from applications.myApp.modules import dongleinput
+dongle = dongleinput.setup()
+if not dongle.isOpen():
+    dongle.open()
+    pass
+=dongleinput.read_from_port(dongle, db)
+}}
 <script>
   var db_data = {{=XML(response.json(data))}}
   if (ready) {
