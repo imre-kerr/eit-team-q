@@ -4,6 +4,7 @@
 import serial
 import time
 import datetime
+import re
 
 def setup():
     ser = serial.Serial()
@@ -37,10 +38,12 @@ def type_string(type):
 def handle_data(data, db):
     print data
     # Data in format "UNIT id type value", ex "UNIT 0 0 0".
-    data = data.split(" ")
+    #data = data.split(" ")
     # TODO: regexp to check that data is sensor value, not setup info?
     # Currently checks for the matching list length.
-    if len(data) == 4:
+    p = re.compile("UNIT \d+ \d+ \d+")
+    if p.match(data):
+        data = data.split(" ")
         print "extracting data and inserting to db"
         sensor_id = data[1]
         sensor_type = data[2]
@@ -50,4 +53,4 @@ def handle_data(data, db):
             db.sensor.insert(id=sensor_id, sensortype=type_string(sensor_type), room = 1) # Can id be set manually?
         db.sensor_reading.insert(reading = sensor_value, datetime = datetime.datetime.now(), sensor = sensor_id)
         db.commit()
-    return "<script>alert('inserted data:" + " ".join(data) + "')</script>"
+    #return "<script>alert('inserted data:" + " ".join(data) + "')</script>"
