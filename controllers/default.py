@@ -16,34 +16,22 @@ from applications.myApp.modules import dongleinput
 dongle = None
 
 def index():
+    #restartDB()
+
     sensorreading = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id)
     sensor = db().select(db.sensor.ALL, orderby=db.sensor.id)
     room = db().select(db.room.ALL)
     house = db().select(db.house.ALL)
     return locals()
+'''
 
-'''
-To remove data from tables:
-    db.house.truncate()
-    db.room.truncate()
-    db.sensor.truncate()
-    db.sensor_reading.truncate()
-'''
-'''
 To create random mock data and get current time
     a = random.uniform(15, 25)
     b = random.uniform(15, 25)
     c = random.uniform(15, 25)
     now = datetime.datetime.now()
 '''
-'''
-Insert house and some rooms into db.
-    db.house.insert(name='mitthus', image='<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" xml:space="preserve"><rect x="136.5" y="86.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="700" height="350"/><rect x="141.5" y="91.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="690" height="340"/><line fill="none" stroke="#000000" stroke-miterlimit="10" x1="335.5" y1="432" x2="335.5" y2="93"/><line fill="none" stroke="#000000" stroke-miterlimit="10" x1="622.5" y1="431" x2="622.5" y2="92"/><rect x="141.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room1" /><rect x="622.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room2" /></svg>')
-    db.room.insert(name='kjøkken', image='<rect x="141.5" y="91.5" width="194" height="340" fill="rgba(0,0,0,0)" id="room1" />', xpos=142, ypos=92, house = db(db.house.name=='mitthus').select()[0])
-    db.room.insert(name='bad', image='<rect x="622.5" y="91.5" width="210" height="340" fill="rgba(0,0,0,0)" id="room2" />', xpos=623, ypos=92, house = db(db.house.name=='mitthus').select()[0])
-   db.room.insert(name='stue', image='<rect x="335.5" y="91.5" width="287" height="340" fill="rgba(0,0,0,0)" id="room3" />', xpos=336, ypos=92, house = db(db.house.name=='mitthus').select()[0])
-'''
-'''
+''''
 #    room = db().select(db.room.ALL)[0]
 #    db.sensor.insert(sensortype = 'Temperature', room = room)
 
@@ -67,6 +55,28 @@ Insert house and some rooms into db.
     db.sensor_reading.insert(reading = random.uniform(-1, 1), datetime = now, sensor = light_sensors[0])
 '''
 
+def restartDB():
+    #To remove data from tables:
+    db.house.truncate()
+    db.room.truncate()
+    db.sensor.truncate()
+    db.sensor_reading.truncate()
+    #Insert house and some rooms into db.
+    db.house.insert(name='mitthus', image='<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" xml:space="preserve"><rect x="136.5" y="86.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="700" height="350"/><rect x="141.5" y="91.5" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="690" height="340"/><line fill="none" stroke="#000000" stroke-miterlimit="10" x1="335.5" y1="432" x2="335.5" y2="93"/><line fill="none" stroke="#000000" stroke-miterlimit="10" x1="622.5" y1="431" x2="622.5" y2="92"/><rect x="141.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room1" /><rect x="622.5" y="91.5" width="195" height="340" fill="rgba(0,0,0,0)" id="room2" /></svg>')
+    db.room.insert(name='kjøkken', image='<rect x="141.5" y="91.5" width="194" height="340" fill="rgba(0,0,0,0)" id="room1" />', xpos=142, ypos=92, house = db(db.house.name=='mitthus').select()[0])
+    db.room.insert(name='bad', image='<rect x="622.5" y="91.5" width="210" height="340" fill="rgba(0,0,0,0)" id="room2" />', xpos=623, ypos=92, house = db(db.house.name=='mitthus').select()[0])
+    db.room.insert(name='stue', image='<rect x="335.5" y="91.5" width="287" height="340" fill="rgba(0,0,0,0)" id="room3" />', xpos=336, ypos=92, house = db(db.house.name=='mitthus').select()[0])
+    db.room.insert(name='spisestue', image='<rect x="0.0" y="91.5" width="210" height="340" fill="rgba(0,0,0,0)" id="room2" />', xpos=0, ypos=92, house = db(db.house.name=='mitthus').select()[0])
+    #
+    db.sensor.insert(sensortype = 'Temperature', room = 1, id = 212)
+    db.sensor.insert(sensortype = 'Light', room = 1, id = 213)
+    db.sensor.insert(sensortype = 'Temperature', room = 2, id = 94)
+    db.sensor.insert(sensortype = 'Light', room = 2, id = 95)
+    db.sensor.insert(sensortype = 'Temperature', room = 3, id = 251)
+    db.sensor.insert(sensortype = 'Light', room = 3, id = 252)
+    #db.sensor.insert(sensortype = 'Temperature', room = 3, id = xxx)
+    db.commit()
+
 def sensors():
     return dict(sensorreading = db().select(db.sensor_reading.ALL, orderby=db.sensor_reading.id))
 
@@ -79,8 +89,7 @@ def map():
 
 @auth.requires_login()
 def touchroom():
-    #
-    return dict(isOpen = True)
+    return dict(average_temp = calc_average_temp())
 
 def calc_average_temp():
     average_temp = 0
@@ -92,7 +101,7 @@ def calc_average_temp():
         readings.append(s.reading)
         datetimes.append(s.datetime)
     average_temp = average_temp / len(sensorreadings)
-
+    return average_temp
 
 def user():
     """

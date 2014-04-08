@@ -31,7 +31,7 @@ function popup(room, db_data) {
     height:480,
     width:640
   });
-  $('.room-dialog').text("Her skal det stå jævlig mye fet info om rom: " + room.name);
+  $('.room-dialog').text("Utvidet info for rom: " + room.name);
   var div_id = 'room' + room.id + '-temp-plot';
   $('.room-dialog').append('<div id="' + div_id + '" class="temp-plot"></div>');
   
@@ -45,6 +45,18 @@ function popup(room, db_data) {
   };
   var enddate = new Date();
   var startdate = new Date(enddate - 600000);
+  $.plot('#'+div_id, [plot_data], {xaxis:{mode:"time", min: startdate, max:enddate}});
+  
+  div_id = 'room' + room.id + '-light-plot';
+  $('.room-dialog').append('<div id="' + div_id + '" class="light-plot" style="width:100%; height:90%;"></div>');
+  plot_data = [];
+  for (var i = db_data.sensorreading.length - 1; i >= 0; i--) {
+    var reading = db_data.sensorreading[i];
+    var sensor = db_data.sensor.where("(el) => el.id == " + reading.sensor)[0];
+    if (sensor.type = 'Light' && sensor.room == room.id) {
+      plot_data.push([Date.parse(reading.datetime), reading.reading]);
+    }
+  };
   $.plot('#'+div_id, [plot_data], {xaxis:{mode:"time", min: startdate, max:enddate}});
 }
 
@@ -98,7 +110,7 @@ function draw_temps (db_data, draw) {
       text.x(room.xpos + 10);
       text.y(room.ypos + 10);
 
-      temp_texts[i] = text;
+      temp_texts.push(text);
     }
   };
 }
@@ -121,7 +133,7 @@ function draw_lights(db_data, draw) {
     var sensor_readings = readings.where('(el) => el.sensor == ' + light_sensors[i].id);
     var room = db_data.room.where('(el) => el.id == ' + light_sensors[i].room)[0];
     if (sensor_readings.length > 0) {
-      var on = sensor_readings[0].reading > 0;
+      var on = sensor_readings[0].reading > 20;
       var url = (on ? '../static/images/lighton.png' : '../static/images/lightoff.png');
       var icon = draw.image(url);
       icon.x(room.xpos + 10);

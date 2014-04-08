@@ -10,6 +10,6 @@ dongleinput.read_from_port(dongle, db)
   var db_data = {{=XML(response.json(data))}}
   if (ready) {
     draw_temps(db_data, draw);
-      //draw_lights(db_data, draw);
+    draw_lights(db_data, draw);
   }
 </script>
